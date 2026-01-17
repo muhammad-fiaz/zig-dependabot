@@ -1,7 +1,5 @@
 # Zig Dependabot Action
 
-[![CI](https://github.com/muhammad-fiaz/zig-dependabot/actions/workflows/ci.yml/badge.svg)](https://github.com/muhammad-fiaz/zig-dependabot/actions/workflows/ci.yml)
-
 **Automated dependency updates for Zig projects.**
 
 This action automatically keeps your Zig dependencies up-to-date by scanning your `build.zig.zon`, checking for newer versions of your git-based dependencies (GitHub, GitLab, Codeberg, etc.), and managing the update process via Pull Requests or Issues.
