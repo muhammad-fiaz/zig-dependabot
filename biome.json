@@ -9,9 +9,7 @@
     "includes": ["**", "!!**/dist"]
   },
   "formatter": {
-    "enabled": true,
-    "indentStyle": "space",
-    "indentWidth": 2
+    "enabled": false
   },
   "linter": {
     "enabled": true,
