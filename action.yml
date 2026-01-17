@@ -1,0 +1,36 @@
+name: 'Zig Dependabot'
+description: 'Automated dependency updates for Zig projects (build.zig.zon)'
+inputs:
+  token:
+    description: 'GitHub Token for creating PRs'
+    required: false
+    default: ${{ github.token }}
+  extra_domains:
+    description: 'Comma-separated list of additional trusted git domains (e.g. git.example.com)'
+    required: false
+  create_pr:
+    description: 'Whether to create a Pull Request for updates (default: true)'
+    required: false
+    default: 'true'
+  create_issue:
+    description: 'Whether to create an Issue for updates instead of/in addition to PRs (default: false)'
+    required: false
+    default: 'false'
+  run_validation:
+    description: 'Whether to run build and test commands to validate updates before creating PRs (default: true)'
+    required: false
+    default: 'true'
+  build_command:
+    description: 'Command to run for building the project (default: zig build)'
+    required: false
+    default: 'zig build'
+  test_command:
+    description: 'Command to run for testing the project (default: zig build test)'
+    required: false
+    default: 'zig build test'
+runs:
+  using: 'node24'
+  main: 'dist/index.js'
+branding:
+  icon: 'package'
+  color: 'orange'
