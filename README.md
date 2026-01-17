@@ -12,7 +12,7 @@
 <a href="https://github.com/muhammad-fiaz/zig-dependabot"><img src="https://img.shields.io/github/last-commit/muhammad-fiaz/zig-dependabot" alt="GitHub last commit"></a>
 <a href="https://github.com/muhammad-fiaz/zig-dependabot"><img src="https://img.shields.io/github/license/muhammad-fiaz/zig-dependabot" alt="License"></a>
 <a href="https://github.com/muhammad-fiaz/zig-dependabot/actions/workflows/ci.yml"><img src="https://github.com/muhammad-fiaz/zig-dependabot/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
-<a href="https://github.com/muhammad-fiaz/zig-dependabot/actions/workflows/codeql.yml"><img src="https://github.com/muhammad-fiaz/zig-dependabot/actions/workflows/codeql.yml/badge.svg" alt="CodeQL"></a>
+<a href="https://github.com/muhammad-fiaz/zig-dependabot/actions/workflows/github-code-scanning/codeql"><img src="https://github.com/muhammad-fiaz/zig-dependabot/actions/workflows/github-code-scanning/codeql/badge.svg" alt="CodeQL"></a>
 <img src="https://img.shields.io/badge/platforms-linux%20%7C%20windows%20%7C%20macos-blue" alt="Supported Platforms">
 <a href="https://github.com/muhammad-fiaz/zig-dependabot/releases/latest"><img src="https://img.shields.io/github/v/release/muhammad-fiaz/zig-dependabot?label=Latest%20Release&style=flat-square" alt="Latest Release"></a>
 <a href="https://pay.muhammadfiaz.com"><img src="https://img.shields.io/badge/Sponsor-pay.muhammadfiaz.com-ff69b4?style=flat&logo=heart" alt="Sponsor"></a>
