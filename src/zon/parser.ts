@@ -48,8 +48,6 @@ export function parseZon(content: string, extraDomains: string = ''): ZonResult 
   // Pattern: .name = .{ ... }
   const depRegex = /^\s*\.([a-zA-Z0-9_-]+)\s*=\s*\.\{([\s\S]*?)\}(?:,?)/gm;
 
-  let match: RegExpExecArray | null = depRegex.exec(block);
-
   const extraDomainsList = extraDomains
     .split(',')
     .map(d => d.trim())
@@ -59,10 +57,13 @@ export function parseZon(content: string, extraDomains: string = ''): ZonResult 
       ? new RegExp(`(${extraDomainsList.map(d => d.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|')})`)
       : null;
 
-  while (match !== null) {
-    if (!match[1] || !match[2]) continue;
+  while (true) {
+    const match = depRegex.exec(block);
+    if (!match) break;
+
     const name = match[1];
     const body = match[2];
+    if (!name || !body) continue;
 
     const urlMatch = body.match(/\.url\s*=\s*"([^"]+)"/);
     const hashMatch = body.match(/\.hash\s*=\s*"([^"]+)"/);
@@ -97,8 +98,7 @@ export function parseZon(content: string, extraDomains: string = ''): ZonResult 
         });
       }
     }
-    match = depRegex.exec(block);
   }
 
-  return { deps };
+  return { deps, minimumZigVersion };
 }

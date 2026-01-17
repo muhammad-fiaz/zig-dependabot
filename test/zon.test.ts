@@ -1,6 +1,6 @@
-import { describe, it, expect } from 'vitest';
-import { parseZon } from '../src/zon/parser';
+import { describe, expect, it } from 'vitest';
 import { updateDependency } from '../src/zon/editor';
+import { parseZon } from '../src/zon/parser';
 
 const sampleZon = `
 .{
@@ -46,6 +46,6 @@ describe('ZON Editor', () => {
     expect(updated).toContain('.hash = "67890"');
     // Ensure minimal diff - other parts untouched
     expect(updated).toContain('.name = "my-project"');
-    expect(updated).toContain('.other = .{');
+    expect(updated).toContain('.other_git = .{');
   });
 });
