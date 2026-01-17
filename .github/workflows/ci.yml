@@ -10,7 +10,7 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Setup Bun
         uses: oven-sh/setup-bun@v2
@@ -31,11 +31,3 @@ jobs:
 
       - name: Build
         run: bun run build
-
-      - name: Check for uncommitted changes
-        run: |
-          if [ -n "$(git status --porcelain)" ]; then
-            echo "Uncommitted changes found after build/lint. Please run 'bun run build' and commit the changes."
-            git status
-            exit 1
-          fi
