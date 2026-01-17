@@ -1,4 +1,4 @@
-import { getClient, context } from '../github/client';
+import { context, getClient } from '../github/client';
 
 export async function managePR(depName: string, version: string, branchName: string, title: string, body: string) {
   const client = getClient();

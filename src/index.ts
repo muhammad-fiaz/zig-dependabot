@@ -1,5 +1,5 @@
-import { checkUpdates } from './updater';
 import * as core from '@actions/core';
+import { checkUpdates } from './updater';
 
 async function main() {
   try {

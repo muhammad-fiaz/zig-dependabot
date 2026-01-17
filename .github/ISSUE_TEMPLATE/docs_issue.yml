@@ -1,0 +1,32 @@
+name: 📚 Documentation Issue
+description: Report a problem with our documentation
+title: '[DOCS]: '
+labels: ['documentation', 'triage']
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for helping improve our documentation!
+  - type: textarea
+    id: description
+    attributes:
+      label: Describe the issue
+      description: A clear and concise description of what the issue is.
+      placeholder: The link to X is broken, or the section about Y is unclear.
+    validations:
+      required: true
+  - type: input
+    id: url
+    attributes:
+      label: URL
+      description: The URL of the page where you found the issue.
+      placeholder: https://github.com/muhammad-fiaz/zig-dependabot/blob/main/README.md
+    validations:
+      required: false
+  - type: textarea
+    id: solution
+    attributes:
+      label: Suggested change
+      description: A clear and concise description of what needs to be changed.
+    validations:
+      required: false

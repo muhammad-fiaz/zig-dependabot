@@ -1,6 +1,31 @@
+<div align="center">
+
 # Zig Dependabot Action
 
 **Automated dependency updates for Zig projects.**
+
+<a href="https://muhammad-fiaz.github.io/zig-dependabot/"><img src="https://img.shields.io/badge/docs-muhammad--fiaz.github.io-blue" alt="Documentation"></a>
+<a href="https://ziglang.org/"><img src="https://img.shields.io/badge/Zig-0.14.0-orange.svg?logo=zig" alt="Zig Version"></a>
+<a href="https://github.com/muhammad-fiaz/zig-dependabot"><img src="https://img.shields.io/github/stars/muhammad-fiaz/zig-dependabot" alt="GitHub stars"></a>
+<a href="https://github.com/muhammad-fiaz/zig-dependabot/issues"><img src="https://img.shields.io/github/issues/muhammad-fiaz/zig-dependabot" alt="GitHub issues"></a>
+<a href="https://github.com/muhammad-fiaz/zig-dependabot/pulls"><img src="https://img.shields.io/github/issues-pr/muhammad-fiaz/zig-dependabot" alt="GitHub pull requests"></a>
+<a href="https://github.com/muhammad-fiaz/zig-dependabot"><img src="https://img.shields.io/github/last-commit/muhammad-fiaz/zig-dependabot" alt="GitHub last commit"></a>
+<a href="https://github.com/muhammad-fiaz/zig-dependabot"><img src="https://img.shields.io/github/license/muhammad-fiaz/zig-dependabot" alt="License"></a>
+<a href="https://github.com/muhammad-fiaz/zig-dependabot/actions/workflows/ci.yml"><img src="https://github.com/muhammad-fiaz/zig-dependabot/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
+<img src="https://img.shields.io/badge/platforms-linux%20%7C%20windows%20%7C%20macos-blue" alt="Supported Platforms">
+<a href="https://github.com/muhammad-fiaz/zig-dependabot/releases/latest"><img src="https://img.shields.io/github/v/release/muhammad-fiaz/zig-dependabot?label=Latest%20Release&style=flat-square" alt="Latest Release"></a>
+<a href="https://pay.muhammadfiaz.com"><img src="https://img.shields.io/badge/Sponsor-pay.muhammadfiaz.com-ff69b4?style=flat&logo=heart" alt="Sponsor"></a>
+<a href="https://github.com/sponsors/muhammad-fiaz"><img src="https://img.shields.io/badge/Sponsor-💖-pink?style=social&logo=github" alt="GitHub Sponsors"></a>
+<a href="https://hits.sh/muhammad-fiaz/zig-dependabot/"><img src="https://hits.sh/muhammad-fiaz/zig-dependabot.svg?label=Visitors&extraCount=0&color=green" alt="Repo Visitors"></a>
+
+<p><em>Automated dependency updates for Zig projects.</em></p>
+
+<b><a href="https://github.com/muhammad-fiaz/zig-dependabot#usage">Usage</a> |
+<a href="https://github.com/muhammad-fiaz/zig-dependabot#inputs">Inputs</a> |
+<a href="https://github.com/muhammad-fiaz/zig-dependabot#features">Features</a> |
+<a href="CONTRIBUTING.md">Contributing</a></b>
+
+</div>
 
 This action automatically keeps your Zig dependencies up-to-date by scanning your `build.zig.zon`, checking for newer versions of your git-based dependencies (GitHub, GitLab, Codeberg, etc.), and managing the update process via Pull Requests or Issues.
 
@@ -71,20 +96,3 @@ This action requires the following permissions to function correctly:
 - **`issues: write`**: To create issues (if `create_issue` is enabled).
 
 If you are using a restrictive token or Fine-grained PAT, ensure it has these scopes for the repository.
-
-## Features
-
-- **Zero Config**: Scans `build.zig.zon` automatically.
-- **Universal Git Support**: Supports GitHub, GitLab, Bitbucket, Codeberg, and any generic Git URL (`git+https`, `.git`, `ssh`, etc.).
-- **Semver**: Smart version resolution (Stable > Prerelease).
-- **PR & Issue Management**: Automatically creates PRs or Issues. Closes outdated PRs.
-- **Automatic Validation**: Runs `zig build` and `zig build test` (configurable) for each update to ensure stability before creating a PR.
-- **Minimal Diffs**: Preserves formatting of your ZON file.
-- **Security Check**: Verifies hashes using `zig fetch` before updating.
-
-## Development
-
-- `bun install`: Install dependencies
-- `bun run test`: Run tests
-- `bun run build`: Build for distribution
-- `bun x tsc --noEmit`: Type check

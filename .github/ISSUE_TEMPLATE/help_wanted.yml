@@ -1,0 +1,23 @@
+name: 🆘 Help Wanted
+description: Ask for help or guidance
+title: '[HELP]: '
+labels: ['help wanted', 'question']
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Please consider asking in [Discussions](https://github.com/muhammad-fiaz/zig-dependabot/discussions) first.
+  - type: textarea
+    id: problem
+    attributes:
+      label: Describe the problem
+      description: A clear and concise description of the problem you're having.
+    validations:
+      required: true
+  - type: textarea
+    id: attempted
+    attributes:
+      label: What you've tried
+      description: Describe what you've tried so far.
+    validations:
+      required: false

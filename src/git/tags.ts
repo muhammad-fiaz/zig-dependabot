@@ -1,5 +1,5 @@
+import { compare, isStable, parse } from '../semver';
 import { run } from '../util/exec';
-import { parse, isStable, compare } from '../semver';
 
 export async function getLatestVersion(repoUrl: string): Promise<string | null> {
   try {

@@ -1,4 +1,4 @@
-name: 'Zig Dependabot'
+name: 'Zig Dependabot Action'
 description: 'Automated dependency updates for Zig projects (build.zig.zon)'
 inputs:
   token:

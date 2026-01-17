@@ -1,10 +1,10 @@
 import * as fs from 'node:fs';
-import { parseZon } from './zon/parser';
 import { getLatestVersion } from './git/tags';
+import { createIssue, managePR } from './pr/manager';
 import { compare, parse } from './semver';
 import { run } from './util/exec';
 import { updateDependency } from './zon/editor';
-import { managePR, createIssue } from './pr/manager';
+import { parseZon } from './zon/parser';
 
 const ZON_FILE = 'build.zig.zon';
 

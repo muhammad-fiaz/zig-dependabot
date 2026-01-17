@@ -8,10 +8,14 @@
   "scripts": {
     "test": "vitest",
     "build": "bun build ./src/index.ts --outdir ./dist --target node",
+    "lint": "biome check ./src",
     "prepare": "husky"
   },
   "lint-staged": {
-    "**/*": "prettier --write --ignore-unknown"
+    "*.{js,ts,json,md}": [
+      "biome check --write --no-errors-on-unmatched",
+      "prettier --write"
+    ]
   },
   "devDependencies": {
     "@biomejs/biome": "2.3.11",
