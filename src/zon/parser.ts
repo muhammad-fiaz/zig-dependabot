@@ -86,13 +86,33 @@ export function parseZon(content: string, extraDomains: string = ''): ZonResult 
 
       if (!isGit) continue;
 
+      let version = '';
+      let cleanUrl = rawUrl;
+
       const tagIdx = rawUrl.lastIndexOf('#');
       if (tagIdx !== -1) {
-        const version = rawUrl.substring(tagIdx + 1);
+        version = rawUrl.substring(tagIdx + 1);
+        cleanUrl = rawUrl.substring(0, tagIdx);
+      } else {
+        // Try to detect archive URLs
+        // e.g. https://github.com/user/repo/archive/refs/tags/v1.0.0.tar.gz
+        // e.g. https://github.com/user/repo/archive/v1.0.0.tar.gz
+        const archiveMatch = rawUrl.match(/\/archive\/(?:refs\/tags\/)?(.+?)(\.tar\.gz|\.zip|\.tar\.xz)$/);
+        if (archiveMatch && archiveMatch[1]) {
+          version = archiveMatch[1];
+          // Attempt to reconstruct repo URL
+          // This is a naive heuristic: remove /archive/...
+          const archiveIndex = rawUrl.indexOf('/archive/');
+          if (archiveIndex !== -1) {
+            cleanUrl = rawUrl.substring(0, archiveIndex);
+          }
+        }
+      }
 
+      if (version) {
         deps.push({
           name,
-          url: rawUrl,
+          url: rawUrl, // Keep original URL for replacement
           hash,
           version
         });

@@ -32,7 +32,11 @@ export async function checkUpdates(
     console.log(`Project requires Zig version >= ${minimumZigVersion}`);
   }
 
-  console.log(`Found ${deps.length} git dependencies.`);
+  if (deps.length === 0) {
+    console.log(`Found 0 git dependencies. Content snippet:\n${content.substring(0, 500)}...`);
+  } else {
+    console.log(`Found ${deps.length} git dependencies.`);
+  }
 
   for (const dep of deps) {
     console.log(`Checking ${dep.name} (current: ${dep.version})...`);
