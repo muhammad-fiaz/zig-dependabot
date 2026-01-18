@@ -1,15 +1,15 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it, mock } from 'bun:test';
 import { getLatestVersion } from '../src/git/tags';
 import * as exec from '../src/util/exec'; // Mock this
 
 // Mock the exec module
-vi.mock('../src/util/exec', () => ({
-  run: vi.fn()
+mock.module('../src/util/exec', () => ({
+  run: mock()
 }));
 
 describe('Git Tags', () => {
   beforeEach(() => {
-    vi.resetAllMocks();
+    mock.clearAllMocks();
   });
 
   it('picks highest stable version', async () => {

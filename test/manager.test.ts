@@ -1,34 +1,34 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it, mock } from 'bun:test';
 import type { Octokit } from '../src/github/client';
 import * as client from '../src/github/client';
 import { createIssue, managePR } from '../src/pr/manager';
 
 // Mock client
-vi.mock('../src/github/client', () => ({
-  getClient: vi.fn(),
+mock.module('../src/github/client', () => ({
+  getClient: mock(),
   context: { repo: { owner: 'me', repo: 'my-project' } }
 }));
 
 const mockPulls = {
-  list: vi.fn(),
-  update: vi.fn(),
-  create: vi.fn()
+  list: mock(),
+  update: mock(),
+  create: mock()
 };
 const mockGit = {
-  deleteRef: vi.fn()
+  deleteRef: mock()
 };
 const mockRepos = {
-  get: vi.fn()
+  get: mock()
 };
 
 const mockIssues = {
-  create: vi.fn(),
-  update: vi.fn(),
-  listForRepo: vi.fn(),
-  addLabels: vi.fn()
+  create: mock(),
+  update: mock(),
+  listForRepo: mock(),
+  addLabels: mock()
 };
 const mockSearch = {
-  issuesAndPullRequests: vi.fn()
+  issuesAndPullRequests: mock()
 };
 
 const mockOctokit = {
@@ -43,7 +43,7 @@ const mockOctokit = {
 
 describe('PR Manager', () => {
   beforeEach(() => {
-    vi.resetAllMocks();
+    mock.clearAllMocks();
     (client.getClient as any).mockReturnValue(mockOctokit);
   });
 
@@ -110,7 +110,7 @@ describe('PR Manager', () => {
 
 describe('Issue Manager', () => {
   beforeEach(() => {
-    vi.resetAllMocks();
+    mock.clearAllMocks();
     (client.getClient as any).mockReturnValue(mockOctokit);
   });
 

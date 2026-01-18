@@ -6,7 +6,7 @@
   "type": "module",
   "private": true,
   "scripts": {
-    "test": "vitest",
+    "test": "bun test",
     "build": "bun build ./src/index.ts --outdir ./dist --target bun",
     "lint": "biome check .",
     "prepare": "husky"
@@ -23,8 +23,7 @@
     "@types/node": "^25.0.9",
     "husky": "^9.1.7",
     "lint-staged": "^16.2.7",
-    "prettier": "3.8.0",
-    "vitest": "^4.0.17"
+    "prettier": "3.8.0"
   },
   "peerDependencies": {
     "typescript": "^5.9.3"

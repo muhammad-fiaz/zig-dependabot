@@ -34,7 +34,7 @@ This action automatically keeps your Zig dependencies up-to-date by scanning you
 
 ## Usage
 
-Create a workflow file `.github/workflows/dependabot.yml`.
+Create a workflow file `.github/workflows/zig-dependabot.yml`.
 
 ### Minimal Configuration
 

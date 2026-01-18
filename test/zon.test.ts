@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it } from 'bun:test';
 import { updateDependency } from '../src/zon/editor';
 import { parseZon } from '../src/zon/parser';
 
