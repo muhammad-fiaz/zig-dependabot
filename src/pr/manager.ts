@@ -64,22 +64,6 @@ export async function managePR(depName: string, version: string, branchName: str
       base
     });
 
-    // Add labels to the newly created PR (process needs getting issue_number from creation response actually,
-    // but create returns the PR object which has number)
-    // Actually create returns a promise of response.
-    // We didn't capture return value in original code.
-    // GitHub API requires separate call to add labels? No, most create APIs don't take labels.
-    // Issues API creates with labels. Pulls API does NOT for 'create'.
-    // We must list PRs or capture info?
-    // Let's rely on finding it again or capturing output.
-    // Easier: Just capture output of create.
-
-    // Since I can't easily change the structure above without re-writing 'await client...', let's assume standard flow.
-    // Wait, I can explicitly search for the PR I just created? Or just capture it.
-    // The previous block was 'await client.rest.pulls.create(...)'.
-    // I will verify if I can capture it easily.
-    // Yes.
-
     console.log('PR created.');
   } else if (existingPR) {
     console.log(`Updating existing PR #${existingPR.number}...`);
@@ -92,14 +76,6 @@ export async function managePR(depName: string, version: string, branchName: str
     });
   }
 }
-
-// Helper to add labels would be nice, but for now I'll just focus on update.
-// The user asked for labels.
-// I should add labels in a separate step?
-// 'add badges labels for pr'.
-// I will try to add labels using issues API (PRs are issues).
-// Need PR number.
-// If created, I need to capture it.
 
 export async function createIssue(depName: string, version: string, title: string, body: string) {
   const client = getClient();
