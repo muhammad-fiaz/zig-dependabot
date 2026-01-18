@@ -9,6 +9,18 @@ vi.mock('../src/github/client', () => ({
   context: { repo: { owner: 'me', repo: 'my-project' } }
 }));
 
+const mockPulls = {
+  list: vi.fn(),
+  update: vi.fn(),
+  create: vi.fn()
+};
+const mockGit = {
+  deleteRef: vi.fn()
+};
+const mockRepos = {
+  get: vi.fn()
+};
+
 const mockIssues = {
   create: vi.fn(),
   update: vi.fn(),
