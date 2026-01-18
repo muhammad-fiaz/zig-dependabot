@@ -41,9 +41,10 @@ export async function checkUpdates(
   for (const dep of deps) {
     console.log(`Checking ${dep.name} (current: ${dep.version})...`);
 
-    // URL without fragment
-    const baseUrl = dep.url.split('#')[0];
+    // Use the parsed repoUrl
+    const baseUrl = dep.repoUrl;
     if (!baseUrl) continue;
+
     // Remove git+ prefix for git ls-remote (git supports https://, ssh://, git@, but git+https:// is specific to package managers)
     const cleanRepoUrl = baseUrl.replace(/^git\+/, '');
 

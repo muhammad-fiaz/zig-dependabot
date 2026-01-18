@@ -1,6 +1,7 @@
 export interface ZonDependency {
   name: string;
   url: string;
+  repoUrl: string;
   hash: string;
   version: string;
 }
@@ -113,6 +114,7 @@ export function parseZon(content: string, extraDomains: string = ''): ZonResult 
         deps.push({
           name,
           url: rawUrl, // Keep original URL for replacement
+          repoUrl: cleanUrl,
           hash,
           version
         });
