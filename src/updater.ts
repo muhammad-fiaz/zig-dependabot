@@ -9,10 +9,7 @@ import { parseZon } from './zon/parser';
 export async function checkUpdates(
   extraDomains: string = '',
   createPr: boolean = true,
-  createIssueFlag: boolean = false,
-  runValidation: boolean = true,
-  buildCommand: string = 'zig build',
-  testCommand: string = 'zig build test'
+  createIssueFlag: boolean = false
 ) {
   const cwd = process.cwd();
   console.log(`Working directory: ${cwd}`);
@@ -80,9 +77,6 @@ export async function checkUpdates(
           latestTag,
           createPr,
           createIssueFlag,
-          runValidation,
-          buildCommand,
-          testCommand,
           updatedBranches // Pass shared state
         );
       } else {
@@ -102,9 +96,6 @@ async function performUpdate(
   newVersion: string,
   createPr: boolean,
   createIssueFlag: boolean,
-  runValidation: boolean,
-  buildCommand: string,
-  testCommand: string,
   updatedBranches: Set<string>
 ) {
   const newBranch = `zig-deps/${name}-${newVersion}`;
@@ -127,8 +118,6 @@ async function performUpdate(
     return;
   }
 
-  const validationCheck = runValidation ? `- [x] Validation passed: \`${buildCommand}\`` : `- [ ] Validation skipped`;
-
   const title = `build(deps): bump ${name} from ${oldVersion} to ${newVersion}`;
   const body = `## Dependency Update: ${name}
 
@@ -143,7 +132,7 @@ Updates **[${name}](${repoUrl})** from \`${oldVersion}\` to \`${newVersion}\`.
 
 ### Verification
 - [x] Update \`build.zig.zon\`
-${validationCheck}
+- [ ] CI Validation (Checked by GitHub Actions)
 
 _Automated by [zig-dependabot](https://github.com/muhammad-fiaz/zig-dependabot)_`;
 
@@ -175,26 +164,6 @@ _Automated by [zig-dependabot](https://github.com/muhammad-fiaz/zig-dependabot)_
       await run('git', ['checkout', '.']);
       await run('git', ['checkout', '-']);
       return;
-    }
-
-    // Validation Steps
-    if (runValidation) {
-      console.log('    Running validation...');
-      try {
-        if (buildCommand) await run('bash', ['-c', buildCommand]);
-        if (testCommand) await run('bash', ['-c', testCommand]);
-        console.log('    Validation passed.');
-      } catch (e: any) {
-        const msg = e instanceof Error ? e.message : String(e);
-        console.error(`    Validation failed. Skipping update. PR will not be created.\n${msg}`);
-        console.error(
-          `    (Hint: To create the PR despite build failures, set 'run_validation: false' in your workflow)`
-        );
-
-        await run('git', ['checkout', '.']);
-        await run('git', ['checkout', '-']);
-        return;
-      }
     }
 
     // 4. Commit and Push

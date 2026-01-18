@@ -11,12 +11,8 @@ async function main() {
       throw new Error("At least one of 'create_pr' or 'create_issue' must be enabled.");
     }
 
-    const runValidation = core.getBooleanInput('run_validation');
-    const buildCommand = core.getInput('build_command');
-    const testCommand = core.getInput('test_command');
-
     try {
-      await checkUpdates(extraDomains, createPr, createIssue, runValidation, buildCommand, testCommand);
+      await checkUpdates(extraDomains, createPr, createIssue);
     } catch (e: any) {
       if (e.status === 403) {
         console.error(
