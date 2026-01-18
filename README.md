@@ -3,7 +3,7 @@
 
 # Zig Dependabot Action
 
-**Automated dependency updates for Zig projects.**
+<p><em>Automated dependency updates for Zig projects.</em></p>
 
 <a href="https://github.com/muhammad-fiaz/zig-dependabot"><img src="https://img.shields.io/github/stars/muhammad-fiaz/zig-dependabot" alt="GitHub stars"></a>
 <a href="https://github.com/muhammad-fiaz/zig-dependabot/issues"><img src="https://img.shields.io/github/issues/muhammad-fiaz/zig-dependabot" alt="GitHub issues"></a>
@@ -18,7 +18,6 @@
 <a href="https://github.com/sponsors/muhammad-fiaz"><img src="https://img.shields.io/badge/Sponsor-💖-pink?style=social&logo=github" alt="GitHub Sponsors"></a>
 <a href="https://hits.sh/github.com/muhammad-fiaz/zig-dependabot/"><img alt="Hits" src="https://hits.sh/github.com/muhammad-fiaz/zig-dependabot.svg"/></a>
 
-<p><em>Automated dependency updates for Zig projects.</em></p>
 
 <table align="center">
   <tr>
