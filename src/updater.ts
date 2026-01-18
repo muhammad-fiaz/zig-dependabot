@@ -168,7 +168,10 @@ async function performUpdate(
       } catch (e: any) {
         // Log just the message to avoid internal stack traces
         const msg = e instanceof Error ? e.message : String(e);
-        console.error(`  Validation failed. Skipping update.\n${msg}`);
+        console.error(`  Validation failed. Skipping update. PR will not be created.\n${msg}`);
+        console.error(
+          `  (Hint: To create the PR despite build failures, set 'run_validation: false' in your workflow)`
+        );
 
         // Clean up and abort
         await run('git', ['checkout', '.']);
