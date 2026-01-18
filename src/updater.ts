@@ -16,13 +16,16 @@ export async function checkUpdates(
   buildCommand: string = 'zig build',
   testCommand: string = 'zig build test'
 ) {
-  console.log(`Reading ${ZON_FILE}...`);
-  if (!fs.existsSync(ZON_FILE)) {
-    console.error(`${ZON_FILE} not found.`);
+  const cwd = process.cwd();
+  console.log(`Working directory: ${cwd}`);
+  const zonPath = `${cwd}/${ZON_FILE}`;
+  console.log(`Reading ${zonPath}...`);
+  if (!fs.existsSync(zonPath)) {
+    console.error(`${zonPath} not found.`);
     return;
   }
 
-  const content = fs.readFileSync(ZON_FILE, 'utf-8');
+  const content = fs.readFileSync(zonPath, 'utf-8');
   const { deps, minimumZigVersion } = parseZon(content, extraDomains);
 
   if (minimumZigVersion) {
