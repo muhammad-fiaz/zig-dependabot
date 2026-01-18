@@ -1,11 +1,10 @@
+import { Glob } from 'bun';
 import { getLatestVersion } from './git/tags';
 import { createIssue, managePR } from './pr/manager';
 import { compare, parse } from './semver';
 import { run } from './util/exec';
 import { updateDependency } from './zon/editor';
 import { parseZon } from './zon/parser';
-
-const ZON_FILE = 'build.zig.zon';
 
 export async function checkUpdates(
   extraDomains: string = '',
@@ -17,76 +16,85 @@ export async function checkUpdates(
 ) {
   const cwd = process.cwd();
   console.log(`Working directory: ${cwd}`);
-  const zonPath = `${cwd}/${ZON_FILE}`;
-  console.log(`Reading ${zonPath}...`);
 
-  const zonFile = Bun.file(zonPath);
-  if (!(await zonFile.exists())) {
-    console.error(`${zonPath} not found.`);
-    return;
-  }
+  // Use Bun Glob to find build.zig.zon files
+  const glob = new Glob('**/build.zig.zon');
+  const updatedBranches = new Set<string>();
 
-  const content = await zonFile.text();
-  const { deps, minimumZigVersion } = parseZon(content, extraDomains);
+  for await (const zonPathRel of glob.scan('.')) {
+    // Exclude zig-cache and node_modules explicitly to be safe
+    if (zonPathRel.includes('zig-cache') || zonPathRel.includes('node_modules')) continue;
 
-  if (minimumZigVersion) {
-    console.log(`Project requires Zig version >= ${minimumZigVersion}`);
-  }
+    const zonPath = `${cwd}/${zonPathRel}`;
+    console.log(`\nScanning ${zonPath}...`);
 
-  if (deps.length === 0) {
-    console.log(`Found 0 git dependencies. Content snippet:\n${content.substring(0, 500)}...`);
-  } else {
-    console.log(`Found ${deps.length} git dependencies.`);
-  }
-
-  for (const dep of deps) {
-    console.log('--------------------------------------------------');
-    console.log(`Checking ${dep.name} (current: ${dep.version})...`);
-
-    const cleanRepoUrl = dep.repoUrl || dep.url;
-
-    // Remove git+ prefix for git ls-remote if needed, though getLatestVersion handles some cleaning
-    const fetchUrl = cleanRepoUrl.replace(/^git\+/, '');
-
-    // Detect latest version
-    const latestTag = await getLatestVersion(fetchUrl);
-
-    if (!latestTag) {
-      console.log(`  No tags found for ${dep.name}. Skipping.`);
+    const zonFile = Bun.file(zonPath);
+    if (!(await zonFile.exists())) {
+      console.log(`  File not found (skipped).`);
       continue;
     }
 
-    const currentVer = parse(dep.version);
-    const latestVer = parse(latestTag);
+    const content = await zonFile.text();
+    const { deps, minimumZigVersion } = parseZon(content, extraDomains);
 
-    if (!currentVer || !latestVer) {
-      console.warn(`  Could not parse versions for ${dep.name} (${dep.version} vs ${latestTag}). Skipping.`);
-      continue;
+    if (minimumZigVersion) {
+      console.log(`  Project requires Zig version >= ${minimumZigVersion}`);
     }
 
-    if (compare(latestVer, currentVer) > 0) {
-      console.log(`  Update available: ${dep.version} -> ${latestTag}`);
-      await performUpdate(
-        content,
-        dep.name,
-        dep.url, // rawUrl
-        cleanRepoUrl, // repoUrl for display
-        dep.version,
-        latestTag,
-        createPr,
-        createIssueFlag,
-        runValidation,
-        buildCommand,
-        testCommand
-      );
+    if (deps.length === 0) {
+      console.log(`  Found 0 git dependencies.`);
     } else {
-      console.log(`  Up to date.`);
+      console.log(`  Found ${deps.length} git dependencies.`);
+    }
+
+    for (const dep of deps) {
+      console.log('  --------------------------------------------------');
+      console.log(`  Checking ${dep.name} (current: ${dep.version})...`);
+
+      const cleanRepoUrl = dep.repoUrl || dep.url;
+      const fetchUrl = cleanRepoUrl.replace(/^git\+/, '');
+      const latestTag = await getLatestVersion(fetchUrl);
+
+      if (!latestTag) {
+        console.log(`    No tags found for ${dep.name}. Skipping.`);
+        continue;
+      }
+
+      const currentVer = parse(dep.version);
+      const latestVer = parse(latestTag);
+
+      if (!currentVer || !latestVer) {
+        console.warn(`    Could not parse versions for ${dep.name}. Skipping.`);
+        continue;
+      }
+
+      if (compare(latestVer, currentVer) > 0) {
+        console.log(`    Update available: ${dep.version} -> ${latestTag}`);
+        await performUpdate(
+          content,
+          zonPath, // Pass file path
+          dep.name,
+          dep.url,
+          cleanRepoUrl,
+          dep.version,
+          latestTag,
+          createPr,
+          createIssueFlag,
+          runValidation,
+          buildCommand,
+          testCommand,
+          updatedBranches // Pass shared state
+        );
+      } else {
+        console.log(`    Up to date.`);
+      }
     }
   }
 }
 
 async function performUpdate(
   originalContent: string,
+  filePath: string, // Changed from ZON_FILE constant to dynamic argument
   name: string,
   rawUrl: string,
   repoUrl: string,
@@ -96,27 +104,26 @@ async function performUpdate(
   createIssueFlag: boolean,
   runValidation: boolean,
   buildCommand: string,
-  testCommand: string
+  testCommand: string,
+  updatedBranches: Set<string>
 ) {
   const newBranch = `zig-deps/${name}-${newVersion}`;
 
   let newUrl = '';
   if (rawUrl.includes(oldVersion)) {
-    // If the URL contains the version (e.g. archive URL), replace it.
     newUrl = rawUrl.replace(oldVersion, newVersion);
   } else {
-    // Otherwise assume it's a git URL needing a fragment
     newUrl = `${rawUrl}#${newVersion}`;
   }
 
   // 1. Calculate Hash
-  console.log(`  Fetching hash for ${newVersion}...`);
+  console.log(`    Fetching hash for ${newVersion}...`);
   let newHash = '';
   try {
     const { stdout } = await run('zig', ['fetch', newUrl]);
     newHash = stdout.trim();
   } catch (e) {
-    console.error(`  Failed to fetch ${newUrl}. Skipping update.`, e);
+    console.error(`    Failed to fetch ${newUrl}. Skipping update.`, e);
     return;
   }
 
@@ -140,23 +147,30 @@ ${validationCheck}
 
 _Automated by [zig-dependabot](https://github.com/muhammad-fiaz/zig-dependabot)_`;
 
-  // 2-4. PR Workflow (Branch, Edit, Commit, Push, PR)
+  // 2-4. PR Workflow
   if (createPr) {
     // 2. Prepare Branch
-    console.log(`  Switching to branch ${newBranch}...`);
+    console.log(`    Switching to branch ${newBranch}...`);
     try {
-      await run('git', ['checkout', '-B', newBranch]);
+      if (updatedBranches.has(newBranch)) {
+        // Branch already created in this run for another file, just checkout
+        await run('git', ['checkout', newBranch]);
+      } else {
+        // Create new branch (reset if exists)
+        await run('git', ['checkout', '-B', newBranch]);
+        updatedBranches.add(newBranch);
+      }
     } catch (e) {
-      console.error('  Failed to create branch', e);
+      console.error('    Failed to switch branch', e);
       return;
     }
 
     // 3. Edit File
     try {
       const newContent = updateDependency(originalContent, name, newUrl, newHash);
-      await Bun.write(ZON_FILE, newContent);
+      await Bun.write(filePath, newContent);
     } catch (e) {
-      console.error('  Failed to update content', e);
+      console.error('    Failed to update content', e);
       // Reset and return
       await run('git', ['checkout', '.']);
       await run('git', ['checkout', '-']);
@@ -164,32 +178,23 @@ _Automated by [zig-dependabot](https://github.com/muhammad-fiaz/zig-dependabot)_
     }
 
     // Validation Steps
+    // Note: Validation runs from root typically. If filePath is in subdir, validation command might need adjustment?
+    // User provides `build_command`. Usually `zig build` from root covers the whole project or root project.
+    // If we are updating a submodule's build.zig.zon, `zig build` from root might fail or pass unrelatedly.
+    // But for now, we assume root execution context for validation commands.
     if (runValidation) {
-      console.log('  Running validation...');
+      console.log('    Running validation...');
       try {
-        // Build
-        console.log(`  Running build: ${buildCommand}`);
-        if (buildCommand) {
-          // Use bash -c to handle complex commands (quotes, chains)
-          await run('bash', ['-c', buildCommand]);
-        }
-
-        // Test
-        console.log(`  Running test: ${testCommand}`);
-        if (testCommand) {
-          await run('bash', ['-c', testCommand]);
-        }
-
-        console.log('  Validation passed.');
+        if (buildCommand) await run('bash', ['-c', buildCommand]);
+        if (testCommand) await run('bash', ['-c', testCommand]);
+        console.log('    Validation passed.');
       } catch (e: any) {
-        // Log just the message to avoid internal stack traces
         const msg = e instanceof Error ? e.message : String(e);
-        console.error(`  Validation failed. Skipping update. PR will not be created.\n${msg}`);
+        console.error(`    Validation failed. Skipping update. PR will not be created.\n${msg}`);
         console.error(
-          `  (Hint: To create the PR despite build failures, set 'run_validation: false' in your workflow)`
+          `    (Hint: To create the PR despite build failures, set 'run_validation: false' in your workflow)`
         );
 
-        // Clean up and abort
         await run('git', ['checkout', '.']);
         await run('git', ['checkout', '-']);
         return;
@@ -201,26 +206,25 @@ _Automated by [zig-dependabot](https://github.com/muhammad-fiaz/zig-dependabot)_
       await run('git', ['config', 'user.name', 'zig-dependabot']);
       await run('git', ['config', 'user.email', 'zig-dependabot@users.noreply.github.com']);
 
-      await run('git', ['add', ZON_FILE]);
+      await run('git', ['add', filePath]);
       await run('git', ['commit', '-m', title]);
 
-      console.log('  Pushing branch...');
+      console.log('    Pushing branch...');
       await run('git', ['push', 'origin', newBranch, '--force']);
     } catch (e) {
-      console.error('  Git operations failed', e);
-      // if push fails, PR creation will fail or point to nothing. Returns.
+      console.error('    Git operations failed', e);
       return;
     }
+
+    // Switch back
+    await run('git', ['checkout', '-']);
 
     // 5. Create PR (only if git ops succeeded)
     try {
       await managePR(name, newVersion, newBranch, title, body);
     } catch (e) {
-      console.error('  PR management failed', e);
+      console.error('    PR management failed', e);
     }
-
-    // Cleanup: Switch back to previous branch
-    await run('git', ['checkout', '-']);
   }
 
   // 6. Create Issue (Optional)
@@ -228,7 +232,7 @@ _Automated by [zig-dependabot](https://github.com/muhammad-fiaz/zig-dependabot)_
     try {
       await createIssue(name, newVersion, title, body);
     } catch (e) {
-      console.error('  Issue creation failed', e);
+      console.error('    Issue creation failed', e);
     }
   }
 }
