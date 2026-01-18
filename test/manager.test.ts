@@ -1,7 +1,7 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { managePR } from '../src/pr/manager';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import type { Octokit } from '../src/github/client';
 import * as client from '../src/github/client';
+import { managePR } from '../src/pr/manager';
 
 // Mock client
 vi.mock('../src/github/client', () => ({

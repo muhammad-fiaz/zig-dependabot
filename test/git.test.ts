@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { getLatestVersion } from '../src/git/tags';
 import * as exec from '../src/util/exec'; // Mock this
 
