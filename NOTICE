@@ -1,0 +1,5 @@
+NOTICE
+
+This action runs entirely within your GitHub Actions runner environment.
+I do not collect any data from your side, nor do I store or access any API keys.
+All credentials (GITHUB_TOKEN) are used strictly for the purpose of the action execution (creating PRs/Issues) and never transmitted to any external server.
