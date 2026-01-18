@@ -36,9 +36,12 @@ describe('PR Manager', () => {
   });
 
   it('creates PR if none exists', async () => {
-    // No open PRs
-    mockPulls.list.mockResolvedValue({ data: [] });
+    // 1. List Open PRs -> []
+    // 2. List Closed PRs -> []
+    mockPulls.list.mockResolvedValueOnce({ data: [] }).mockResolvedValueOnce({ data: [] });
+
     mockRepos.get.mockResolvedValue({ data: { default_branch: 'main' } });
+    mockPulls.create.mockResolvedValue({ data: { number: 101 } });
 
     await managePR('dep', '1.0.0', 'zig-deps/dep-1.0.0', 'Title', 'Body');
 
@@ -57,8 +60,12 @@ describe('PR Manager', () => {
       head: { ref: 'zig-deps/dep-0.9.0' }
     };
 
-    mockPulls.list.mockResolvedValue({ data: [oldPR] });
+    // 1. List Open PRs -> [oldPR]
+    // 2. List Closed PRs -> [] (so we create new one)
+    mockPulls.list.mockResolvedValueOnce({ data: [oldPR] }).mockResolvedValueOnce({ data: [] });
+
     mockRepos.get.mockResolvedValue({ data: { default_branch: 'main' } });
+    mockPulls.create.mockResolvedValue({ data: { number: 102 } });
 
     await managePR('dep', '1.0.0', 'zig-deps/dep-1.0.0', 'Title', 'Body');
 
