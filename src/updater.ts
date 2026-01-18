@@ -120,6 +120,8 @@ async function performUpdate(
     return;
   }
 
+  const validationCheck = runValidation ? `- [x] Validation passed: \`${buildCommand}\`` : `- [ ] Validation skipped`;
+
   const title = `build(deps): bump ${name} from ${oldVersion} to ${newVersion}`;
   const body = `## Dependency Update: ${name}
 
@@ -132,7 +134,7 @@ Updates **[${name}](${baseUrl})** from \`${oldVersion}\` to \`${newVersion}\`.
 
 ### Verification
 - [x] Update \`build.zig.zon\`
-- [x] Validation passed: \`${runValidation ? buildCommand : 'Skipped'}\`
+${validationCheck}
 
 _Automated by [zig-dependabot](https://github.com/muhammad-fiaz/zig-dependabot)_`;
 
@@ -195,8 +197,8 @@ _Automated by [zig-dependabot](https://github.com/muhammad-fiaz/zig-dependabot)_
 
     // 4. Commit and Push
     try {
-      await run('git', ['config', 'user.name', 'github-actions[bot]']);
-      await run('git', ['config', 'user.email', 'github-actions[bot]@users.noreply.github.com']);
+      await run('git', ['config', 'user.name', 'zig-dependabot']);
+      await run('git', ['config', 'user.email', 'zig-dependabot@users.noreply.github.com']);
 
       await run('git', ['add', ZON_FILE]);
       await run('git', ['commit', '-m', title]);
