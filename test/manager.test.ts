@@ -53,7 +53,7 @@ describe('PR Manager', () => {
     mockRepos.get.mockResolvedValue({ data: { default_branch: 'main' } });
     mockPulls.create.mockResolvedValue({ data: { number: 101 } });
 
-    await managePR('dep', '1.0.0', 'zig-deps/dep-1.0.0', 'Title', 'Body');
+    await managePR('dep', '1.0.0', 'zig-deps/dep-1.0.0', 'Title', 'Body', false, false);
 
     expect(mockPulls.create).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -72,7 +72,7 @@ describe('PR Manager', () => {
     mockRepos.get.mockResolvedValue({ data: { default_branch: 'main' } });
     mockPulls.create.mockResolvedValue({ data: { number: 102 } });
 
-    await managePR('dep', '1.0.0', 'zig-deps/dep-1.0.0', 'Title', 'Body');
+    await managePR('dep', '1.0.0', 'zig-deps/dep-1.0.0', 'Title', 'Body', false, true);
 
     expect(mockPulls.update).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -95,7 +95,7 @@ describe('PR Manager', () => {
     };
     mockPulls.list.mockResolvedValue({ data: [existingPR] });
 
-    await managePR('dep', '1.0.0', 'zig-deps/dep-1.0.0', 'Title', 'Body');
+    await managePR('dep', '1.0.0', 'zig-deps/dep-1.0.0', 'Title', 'Body', false, false);
 
     expect(mockPulls.update).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -122,7 +122,7 @@ describe('Issue Manager', () => {
     // Create returns new issue
     mockIssues.create.mockResolvedValue({ data: { number: 201 } });
 
-    await createIssue('dep', '1.0.0', 'Title', 'Body');
+    await createIssue('dep', '1.0.0', 'Title', 'Body', false, false);
 
     expect(mockIssues.create).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -137,7 +137,7 @@ describe('Issue Manager', () => {
     const existing = { number: 200, title: 'Title', state: 'open' };
     mockSearch.issuesAndPullRequests.mockResolvedValue({ data: { items: [existing] } });
 
-    await createIssue('dep', '1.0.0', 'Title', 'Body');
+    await createIssue('dep', '1.0.0', 'Title', 'Body', false, false);
 
     expect(mockIssues.create).not.toHaveBeenCalled();
     expect(mockIssues.update).not.toHaveBeenCalled();
@@ -147,7 +147,7 @@ describe('Issue Manager', () => {
     const existing = { number: 200, title: 'Title', state: 'closed' };
     mockSearch.issuesAndPullRequests.mockResolvedValue({ data: { items: [existing] } });
 
-    await createIssue('dep', '1.0.0', 'Title', 'Body');
+    await createIssue('dep', '1.0.0', 'Title', 'Body', false, false);
 
     expect(mockIssues.update).not.toHaveBeenCalled();
     expect(mockIssues.create).not.toHaveBeenCalled();

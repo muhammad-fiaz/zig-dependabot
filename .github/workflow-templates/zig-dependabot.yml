@@ -32,3 +32,5 @@ jobs:
           # Configuration
           create_pr: true #default true
           create_issue: true #default false
+          reopen: false #default false
+          close_old: false #default false

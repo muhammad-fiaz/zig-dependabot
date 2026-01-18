@@ -1,6 +1,14 @@
 import { context, getClient } from '../github/client';
 
-export async function managePR(depName: string, version: string, branchName: string, title: string, body: string) {
+export async function managePR(
+  depName: string,
+  version: string,
+  branchName: string,
+  title: string,
+  body: string,
+  reopen: boolean,
+  closeOld: boolean
+) {
   const client = getClient();
   const { owner, repo } = context.repo;
 
@@ -26,7 +34,7 @@ export async function managePR(depName: string, version: string, branchName: str
         currentExists = true;
         existingPR = pr;
         console.log(`PR #${pr.number} already exists for ${version}.`);
-      } else {
+      } else if (closeOld) {
         console.log(`Closing outdated PR #${pr.number} (${headRef})...`);
         await client.rest.pulls.update({
           owner,
@@ -59,7 +67,18 @@ export async function managePR(depName: string, version: string, branchName: str
       per_page: 1
     });
 
-    if (closedPulls.length > 0) {
+    const closedPR = closedPulls[0];
+    if (reopen && closedPR) {
+      console.log(`Reopening closed PR #${closedPR.number}...`);
+      await client.rest.pulls.update({
+        owner,
+        repo,
+        pull_number: closedPR.number,
+        state: 'open'
+      });
+      console.log(`PR #${closedPR.number} reopened.`);
+      return closedPR.number;
+    } else if (closedPR) {
       console.log(
         `PR for ${version} (branch ${branchName}) was previously closed. Skipping creation to respect user decision.`
       );
@@ -110,7 +129,15 @@ export async function managePR(depName: string, version: string, branchName: str
   return null;
 }
 
-export async function createIssue(depName: string, version: string, title: string, body: string, prNumber?: number) {
+export async function createIssue(
+  depName: string,
+  version: string,
+  title: string,
+  body: string,
+  reopen: boolean,
+  closeOld: boolean,
+  prNumber?: number
+) {
   const client = getClient();
   const { owner, repo } = context.repo;
 
@@ -126,8 +153,22 @@ export async function createIssue(depName: string, version: string, title: strin
 
   if (existingIssue) {
     if (existingIssue.state === 'closed') {
-      console.log(`Issue for ${depName} ${version} was previously closed. Skipping creation to respect user decision.`);
-      return existingIssue.number;
+      if (reopen) {
+        console.log(`Reopening existing issue #${existingIssue.number}...`);
+        await client.rest.issues.update({
+          owner,
+          repo,
+          issue_number: existingIssue.number,
+          state: 'open'
+        });
+        console.log('Issue reopened.');
+        return existingIssue.number;
+      } else {
+        console.log(
+          `Issue for ${depName} ${version} was previously closed. Skipping creation to respect user decision.`
+        );
+        return existingIssue.number;
+      }
     } else {
       console.log(`Issue already exists for ${depName} ${version}. Skipping.`);
       return existingIssue.number;
@@ -143,19 +184,21 @@ export async function createIssue(depName: string, version: string, title: strin
     per_page: 100
   });
 
-  const outdatedIssues = openIssues.filter(
-    i => !i.pull_request && i.title.startsWith(`build(deps): bump ${depName} from`) && i.title !== title
-  );
+  if (closeOld) {
+    const outdatedIssues = openIssues.filter(
+      i => !i.pull_request && i.title.startsWith(`build(deps): bump ${depName} from`) && i.title !== title
+    );
 
-  for (const issue of outdatedIssues) {
-    console.log(`Closing outdated issue #${issue.number}: ${issue.title}`);
-    await client.rest.issues.update({
-      owner,
-      repo,
-      issue_number: issue.number,
-      state: 'closed',
-      state_reason: 'completed'
-    });
+    for (const issue of outdatedIssues) {
+      console.log(`Closing outdated issue #${issue.number}: ${issue.title}`);
+      await client.rest.issues.update({
+        owner,
+        repo,
+        issue_number: issue.number,
+        state: 'closed',
+        state_reason: 'completed'
+      });
+    }
   }
 
   let finalBody = body;

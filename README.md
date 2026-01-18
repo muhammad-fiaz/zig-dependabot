@@ -72,6 +72,10 @@ jobs:
           create_pr: true # default true
           # Optional: create issue along with PR
           create_issue: false
+          # Optional: Reopen closed PRs/Issues
+          reopen: false
+          # Optional: Close outdated PRs/Issues
+          close_old: false
 ```
 
 ### Inputs
@@ -82,6 +86,8 @@ jobs:
 | `extra_domains` | Comma-separated list of additional trusted git domains (e.g. `git.sr.ht`). By default, `github.com`, `gitlab.com`, `bitbucket.org`, and `codeberg.org` are trusted. | `""`                  |
 | `create_pr`     | Whether to create a Pull Request for updates.                                                                                                                       | `true`                |
 | `create_issue`  | Whether to create an Issue for updates instead of/in addition to PRs.                                                                                               | `false`               |
+| `reopen`        | Whether to reopen closed PRs/Issues if they exist.                                                                                                                  | `false`               |
+| `close_old`     | Whether to close outdated PRs and Issues.                                                                                                                           | `false`               |
 
 ### Required Permissions
 

@@ -6,13 +6,15 @@ async function main() {
     const extraDomains = core.getInput('extra_domains');
     const createPr = core.getBooleanInput('create_pr');
     const createIssue = core.getBooleanInput('create_issue');
+    const reopen = core.getBooleanInput('reopen');
+    const closeOld = core.getBooleanInput('close_old');
 
     if (!createPr && !createIssue) {
       throw new Error("At least one of 'create_pr' or 'create_issue' must be enabled.");
     }
 
     try {
-      await checkUpdates(extraDomains, createPr, createIssue);
+      await checkUpdates(extraDomains, createPr, createIssue, reopen, closeOld);
     } catch (e: any) {
       if (e.status === 403) {
         console.error(

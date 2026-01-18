@@ -16,6 +16,14 @@ inputs:
     description: 'Whether to create an Issue for updates instead of/in addition to PRs (default: false)'
     required: false
     default: 'false'
+  reopen:
+    description: 'Whether to reopen closed PRs/Issues if they exist'
+    required: false
+    default: 'false'
+  close_old:
+    description: 'Whether to close outdated PRs and Issues'
+    required: false
+    default: 'false'
 runs:
   using: 'composite'
   steps:
@@ -42,6 +50,8 @@ runs:
         INPUT_EXTRA_DOMAINS: ${{ inputs.extra_domains }}
         INPUT_CREATE_PR: ${{ inputs.create_pr }}
         INPUT_CREATE_ISSUE: ${{ inputs.create_issue }}
+        INPUT_REOPEN: ${{ inputs.reopen }}
+        INPUT_CLOSE_OLD: ${{ inputs.close_old }}
 branding:
   icon: 'package'
   color: 'orange'

@@ -9,7 +9,9 @@ import { parseZon } from './zon/parser';
 export async function checkUpdates(
   extraDomains: string = '',
   createPr: boolean = true,
-  createIssueFlag: boolean = false
+  createIssueFlag: boolean = false,
+  reopen: boolean = false,
+  closeOld: boolean = false
 ) {
   const cwd = process.cwd();
   console.log(`Working directory: ${cwd}`);
@@ -77,6 +79,8 @@ export async function checkUpdates(
           latestTag,
           createPr,
           createIssueFlag,
+          reopen,
+          closeOld,
           updatedBranches // Pass shared state
         );
       } else {
@@ -96,6 +100,8 @@ async function performUpdate(
   newVersion: string,
   createPr: boolean,
   createIssueFlag: boolean,
+  reopen: boolean,
+  closeOld: boolean,
   updatedBranches: Set<string>
 ) {
   const newBranch = `zig-deps/${name}-${newVersion}`;
@@ -192,7 +198,7 @@ _Automated by [zig-dependabot](https://github.com/muhammad-fiaz/zig-dependabot)_
     try {
       // Cast the result to any if strict typing complains about void (though we updated it to return number | null)
       // Since manager.ts is module, build should pick it up.
-      const result = await managePR(name, newVersion, newBranch, title, body);
+      const result = await managePR(name, newVersion, newBranch, title, body, reopen, closeOld);
       if (result) prNumber = result;
     } catch (e) {
       console.error('    PR management failed', e);
@@ -203,7 +209,7 @@ _Automated by [zig-dependabot](https://github.com/muhammad-fiaz/zig-dependabot)_
   let issueNumber: number | null = null;
   if (createIssueFlag) {
     try {
-      const res = await createIssue(name, newVersion, title, body, prNumber || undefined);
+      const res = await createIssue(name, newVersion, title, body, reopen, closeOld, prNumber || undefined);
       if (res) issueNumber = res;
     } catch (e) {
       console.error('    Issue creation failed', e);
