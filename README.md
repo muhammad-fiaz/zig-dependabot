@@ -20,9 +20,13 @@
 
 <p><em>Automated dependency updates for Zig projects.</em></p>
 
-<b><a href="#usage">Usage</a> |
-<a href="#inputs">Inputs</a> |
-<a href="CONTRIBUTING.md">Contributing</a></b>
+<table align="center">
+  <tr>
+    <td align="center"><a href="#usage"><b>Usage</b></a></td>
+    <td align="center"><a href="#inputs"><b>Inputs</b></a></td>
+    <td align="center"><a href="CONTRIBUTING.md"><b>Contributing</b></a></td>
+  </tr>
+</table>
 
 </div>
 
