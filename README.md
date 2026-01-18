@@ -66,6 +66,7 @@ jobs:
           # Optional: Add extra trusted domains
           extra_domains: 'git.sr.ht, my-gitea.com'
           # Optional: Configure notifications
+          # If not set, defaults to creating PRs (true) but not issues (false).
           create_pr: true
           create_issue: false
           # Optional: Validate updates before creating PR (Recommended)
