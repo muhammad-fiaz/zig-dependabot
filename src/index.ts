@@ -15,7 +15,18 @@ async function main() {
     const buildCommand = core.getInput('build_command');
     const testCommand = core.getInput('test_command');
 
-    await checkUpdates(extraDomains, createPr, createIssue, runValidation, buildCommand, testCommand);
+    try {
+      await checkUpdates(extraDomains, createPr, createIssue, runValidation, buildCommand, testCommand);
+    } catch (e: any) {
+      if (e.status === 403) {
+        console.error(
+          'Error: Insufficient permissions (403). check your GITHUB_TOKEN permissions. Ensure "contents: write" and "pull-requests: write" are enabled.'
+        );
+      } else {
+        console.error('An unexpected error occurred:', e);
+      }
+      process.exit(1);
+    }
   } catch (error) {
     if (error instanceof Error) {
       core.setFailed(error.message);

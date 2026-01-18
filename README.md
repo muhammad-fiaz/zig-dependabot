@@ -81,7 +81,7 @@ jobs:
 | ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------- |
 | `token`          | GitHub Token used for API access.                                                                                                                                   | `${{ github.token }}` |
 | `extra_domains`  | Comma-separated list of additional trusted git domains (e.g. `git.sr.ht`). By default, `github.com`, `gitlab.com`, `bitbucket.org`, and `codeberg.org` are trusted. | `""`                  |
-| `create_pr`      | Whether to create a Pull Request for updates.                                                                                                                       | `true`                |
+| `create_pr`      | Whether to create a Pull Request for updates.                                                                                                                       | `false`               |
 | `create_issue`   | Whether to create an Issue for updates instead of/in addition to PRs.                                                                                               | `false`               |
 | `run_validation` | Whether to run build and test commands to validate updates.                                                                                                         | `true`                |
 | `build_command`  | Command to run for building the project during validation.                                                                                                          | `zig build`           |

@@ -11,7 +11,7 @@ inputs:
   create_pr:
     description: 'Whether to create a Pull Request for updates (default: true)'
     required: false
-    default: 'true'
+    default: 'false'
   create_issue:
     description: 'Whether to create an Issue for updates instead of/in addition to PRs (default: false)'
     required: false
