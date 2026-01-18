@@ -63,7 +63,7 @@ export async function managePR(depName: string, version: string, branchName: str
       console.log(
         `PR for ${version} (branch ${branchName}) was previously closed. Skipping creation to respect user decision.`
       );
-      return;
+      return null;
     }
 
     // Get default branch
@@ -93,6 +93,8 @@ export async function managePR(depName: string, version: string, branchName: str
     } catch (e) {
       console.warn('Failed to add labels to PR:', e);
     }
+
+    return newPr.number;
   } else if (existingPR) {
     console.log(`Updating existing PR #${existingPR.number}...`);
     await client.rest.pulls.update({
@@ -102,10 +104,13 @@ export async function managePR(depName: string, version: string, branchName: str
       title,
       body
     });
+    return existingPR.number;
   }
+
+  return null;
 }
 
-export async function createIssue(depName: string, version: string, title: string, body: string) {
+export async function createIssue(depName: string, version: string, title: string, body: string, prNumber?: number) {
   const client = getClient();
   const { owner, repo } = context.repo;
 
@@ -140,12 +145,17 @@ export async function createIssue(depName: string, version: string, title: strin
     });
   }
 
+  let finalBody = body;
+  if (prNumber) {
+    finalBody += `\n\n### Related PR\n- #${prNumber}`;
+  }
+
   console.log(`Creating issue for ${depName} ${version}...`);
   await client.rest.issues.create({
     owner,
     repo,
     title,
-    body,
+    body: finalBody,
     labels: ['dependencies', 'zig']
   });
   console.log('Issue created.');
