@@ -94,7 +94,7 @@ export async function checkUpdates(
 
 async function performUpdate(
   originalContent: string,
-  filePath: string, // Changed from ZON_FILE constant to dynamic argument
+  filePath: string,
   name: string,
   rawUrl: string,
   repoUrl: string,
@@ -178,10 +178,6 @@ _Automated by [zig-dependabot](https://github.com/muhammad-fiaz/zig-dependabot)_
     }
 
     // Validation Steps
-    // Note: Validation runs from root typically. If filePath is in subdir, validation command might need adjustment?
-    // User provides `build_command`. Usually `zig build` from root covers the whole project or root project.
-    // If we are updating a submodule's build.zig.zon, `zig build` from root might fail or pass unrelatedly.
-    // But for now, we assume root execution context for validation commands.
     if (runValidation) {
       console.log('    Running validation...');
       try {
