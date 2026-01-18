@@ -96,3 +96,12 @@ This action requires the following permissions to function correctly:
 - **`issues: write`**: To create issues (if `create_issue` is enabled).
 
 If you are using a restrictive token or Fine-grained PAT, ensure it has these scopes for the repository.
+
+### Troubleshooting
+
+**No PR created?**
+
+If the action detects an update but doesn't create a PR, check the action logs.
+
+- If `run_validation` is enabled (default), the action usually aborts if `zig build` or `zig build test` fails with the new dependency. This ensures you don't merge broken updates.
+- You can disable this by setting `run_validation: false`, but it is not recommended.
