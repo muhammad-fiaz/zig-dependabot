@@ -143,18 +143,13 @@ describe('Issue Manager', () => {
     expect(mockIssues.update).not.toHaveBeenCalled();
   });
 
-  it('reopens issue if closed issue exists', async () => {
+  it('skips creation if closed issue exists', async () => {
     const existing = { number: 200, title: 'Title', state: 'closed' };
     mockSearch.issuesAndPullRequests.mockResolvedValue({ data: { items: [existing] } });
 
     await createIssue('dep', '1.0.0', 'Title', 'Body');
 
-    expect(mockIssues.update).toHaveBeenCalledWith(
-      expect.objectContaining({
-        issue_number: 200,
-        state: 'open'
-      })
-    );
+    expect(mockIssues.update).not.toHaveBeenCalled();
     expect(mockIssues.create).not.toHaveBeenCalled();
   });
 });

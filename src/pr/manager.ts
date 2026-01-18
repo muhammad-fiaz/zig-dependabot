@@ -126,14 +126,7 @@ export async function createIssue(depName: string, version: string, title: strin
 
   if (existingIssue) {
     if (existingIssue.state === 'closed') {
-      console.log(`Reopening existing issue #${existingIssue.number}...`);
-      await client.rest.issues.update({
-        owner,
-        repo,
-        issue_number: existingIssue.number,
-        state: 'open'
-      });
-      console.log('Issue reopened.');
+      console.log(`Issue for ${depName} ${version} was previously closed. Skipping creation to respect user decision.`);
       return existingIssue.number;
     } else {
       console.log(`Issue already exists for ${depName} ${version}. Skipping.`);
