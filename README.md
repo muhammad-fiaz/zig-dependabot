@@ -5,7 +5,6 @@
 **Automated dependency updates for Zig projects.**
 
 <a href="https://muhammad-fiaz.github.io/zig-dependabot/"><img src="https://img.shields.io/badge/docs-muhammad--fiaz.github.io-blue" alt="Documentation"></a>
-<a href="https://ziglang.org/"><img src="https://img.shields.io/badge/Zig-0.14.0-orange.svg?logo=zig" alt="Zig Version"></a>
 <a href="https://github.com/muhammad-fiaz/zig-dependabot"><img src="https://img.shields.io/github/stars/muhammad-fiaz/zig-dependabot" alt="GitHub stars"></a>
 <a href="https://github.com/muhammad-fiaz/zig-dependabot/issues"><img src="https://img.shields.io/github/issues/muhammad-fiaz/zig-dependabot" alt="GitHub issues"></a>
 <a href="https://github.com/muhammad-fiaz/zig-dependabot/pulls"><img src="https://img.shields.io/github/issues-pr/muhammad-fiaz/zig-dependabot" alt="GitHub pull requests"></a>
@@ -17,7 +16,7 @@
 <a href="https://github.com/muhammad-fiaz/zig-dependabot/releases/latest"><img src="https://img.shields.io/github/v/release/muhammad-fiaz/zig-dependabot?label=Latest%20Release&style=flat-square" alt="Latest Release"></a>
 <a href="https://pay.muhammadfiaz.com"><img src="https://img.shields.io/badge/Sponsor-pay.muhammadfiaz.com-ff69b4?style=flat&logo=heart" alt="Sponsor"></a>
 <a href="https://github.com/sponsors/muhammad-fiaz"><img src="https://img.shields.io/badge/Sponsor-💖-pink?style=social&logo=github" alt="GitHub Sponsors"></a>
-<a href="https://hits.sh/muhammad-fiaz/zig-dependabot/"><img src="https://hits.sh/muhammad-fiaz/zig-dependabot.svg?label=Visitors&extraCount=0&color=green" alt="Repo Visitors"></a>
+<a href="https://hits.sh/github.com/muhammad-fiaz/zig-dependabot/"><img alt="Hits" src="https://hits.sh/github.com/muhammad-fiaz/zig-dependabot.svg"/></a>
 
 <p><em>Automated dependency updates for Zig projects.</em></p>
 
