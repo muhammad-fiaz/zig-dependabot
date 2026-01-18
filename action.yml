@@ -1,5 +1,5 @@
 name: 'Zig Dependabot Action'
-description: 'Automated dependency updates for Zig projects (build.zig.zon)'
+description: 'Automated dependency updates for Zig projects.'
 inputs:
   token:
     description: 'GitHub Token for creating PRs'
