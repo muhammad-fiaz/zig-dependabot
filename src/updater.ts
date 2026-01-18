@@ -56,7 +56,13 @@ export async function checkUpdates(
       continue;
     }
 
-    // ... (semver checks preserved)
+    const currentVer = parse(dep.version);
+    const latestVer = parse(latestTag);
+
+    if (!currentVer || !latestVer) {
+      console.warn(`  Could not parse versions for ${dep.name} (${dep.version} vs ${latestTag}). Skipping.`);
+      continue;
+    }
 
     if (compare(latestVer, currentVer) > 0) {
       console.log(`  Update available: ${dep.version} -> ${latestTag}`);
