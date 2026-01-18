@@ -2,7 +2,7 @@ name: Zig Dependabot
 
 on:
   schedule:
-    - cron: '*/5 * * * *' # Run every 5 minutes
+    - cron: '0 0 * * *' # Run daily at midnight
   workflow_dispatch: # Allow manual trigger
 
 permissions:
@@ -15,24 +15,23 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@v4
 
       - name: Setup Zig
-        uses: mlugg/setup-zig@v2
+        uses: mlugg/setup-zig@v1
         with:
           version: master
 
       - name: Run Zig Dependabot
         uses: muhammad-fiaz/zig-dependabot@v1.0.0
         with:
-          token: ${{ secrets.GH_TOKEN }}
+          token: ${{ secrets.GITHUB_TOKEN }}
           # Optional: Add extra trusted domains
-          extra_domains: 'git.sr.ht, my-gitea.com'
-          # Optional: Configure notifications
-          # If not set, defaults to creating PRs (true) but not issues (false).
+          # extra_domains: 'git.sr.ht, my-gitea.com'
+
+          # Configuration
           create_pr: true
-          create_issue: false
-          # Optional: Validate updates before creating PR (Recommended)
+          create_issue: true
           run_validation: true
-          build_command: 'zig build -Doptimize=ReleaseSafe'
+          build_command: 'zig build'
           test_command: 'zig build test'
