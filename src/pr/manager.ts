@@ -114,23 +114,43 @@ export async function createIssue(depName: string, version: string, title: strin
   const client = getClient();
   const { owner, repo } = context.repo;
 
-  // Check for existing open issues with the same title to avoid spam
-  const { data: issues } = await client.rest.issues.listForRepo({
+  // Search for existing issues (open or closed) to handle reopening
+  // Using search API is more efficient than listing all issues for checking duplicates
+  const q = `repo:${owner}/${repo} is:issue in:title "${title}"`;
+  const { data: searchResults } = await client.rest.search.issuesAndPullRequests({
+    q,
+    per_page: 1
+  });
+
+  const existingIssue = searchResults.items.find(i => i.title === title);
+
+  if (existingIssue) {
+    if (existingIssue.state === 'closed') {
+      console.log(`Reopening existing issue #${existingIssue.number}...`);
+      await client.rest.issues.update({
+        owner,
+        repo,
+        issue_number: existingIssue.number,
+        state: 'open'
+      });
+      console.log('Issue reopened.');
+      return existingIssue.number;
+    } else {
+      console.log(`Issue already exists for ${depName} ${version}. Skipping.`);
+      return existingIssue.number;
+    }
+  }
+
+  // Close outdated issues for this dependency (search for open ones)
+  // We can stick to listing open issues for this cleanup task
+  const { data: openIssues } = await client.rest.issues.listForRepo({
     owner,
     repo,
     state: 'open',
-    creator: 'app/github-actions', // Optional filter
     per_page: 100
   });
 
-  const exactMatch = issues.find(i => i.title === title && !i.pull_request);
-  if (exactMatch) {
-    console.log(`Issue already exists for ${depName} ${version}. Skipping.`);
-    return;
-  }
-
-  // Close outdated issues for this dependency
-  const outdatedIssues = issues.filter(
+  const outdatedIssues = openIssues.filter(
     i => !i.pull_request && i.title.startsWith(`build(deps): bump ${depName} from`) && i.title !== title
   );
 
