@@ -69,7 +69,7 @@ export async function checkUpdates(
       await performUpdate(
         content,
         dep.name,
-        baseUrl,
+        dep.url, // Pass ORIGINAL raw URL
         dep.version,
         latestTag,
         createPr,
@@ -97,7 +97,15 @@ async function performUpdate(
   testCommand: string
 ) {
   const newBranch = `zig-deps/${name}-${newVersion}`;
-  const newUrl = `${baseUrl}#${newVersion}`;
+
+  let newUrl = '';
+  if (baseUrl.includes(oldVersion)) {
+    // If the URL contains the version (e.g. archive URL), replace it.
+    newUrl = baseUrl.replace(oldVersion, newVersion);
+  } else {
+    // Otherwise assume it's a git URL needing a fragment
+    newUrl = `${baseUrl}#${newVersion}`;
+  }
 
   // 1. Calculate Hash
   console.log(`  Fetching hash for ${newVersion}...`);
