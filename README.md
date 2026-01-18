@@ -4,7 +4,6 @@
 
 **Automated dependency updates for Zig projects.**
 
-<a href="https://muhammad-fiaz.github.io/zig-dependabot/"><img src="https://img.shields.io/badge/docs-muhammad--fiaz.github.io-blue" alt="Documentation"></a>
 <a href="https://github.com/muhammad-fiaz/zig-dependabot"><img src="https://img.shields.io/github/stars/muhammad-fiaz/zig-dependabot" alt="GitHub stars"></a>
 <a href="https://github.com/muhammad-fiaz/zig-dependabot/issues"><img src="https://img.shields.io/github/issues/muhammad-fiaz/zig-dependabot" alt="GitHub issues"></a>
 <a href="https://github.com/muhammad-fiaz/zig-dependabot/pulls"><img src="https://img.shields.io/github/issues-pr/muhammad-fiaz/zig-dependabot" alt="GitHub pull requests"></a>
