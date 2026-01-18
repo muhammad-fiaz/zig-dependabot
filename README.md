@@ -67,23 +67,16 @@ jobs:
           extra_domains: 'git.sr.ht, my-gitea.com'
           # Optional: Configure notifications
           create_issue: false
-          # Optional: Validate updates before creating PR (Recommended)
-          run_validation: true
-          build_command: 'zig build -Doptimize=ReleaseSafe'
-          test_command: 'zig build test'
 ```
 
 ### Inputs
 
-| Input            | Description                                                                                                                                                         | Default               |
-| ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------- |
-| `token`          | GitHub Token used for API access.                                                                                                                                   | `${{ github.token }}` |
-| `extra_domains`  | Comma-separated list of additional trusted git domains (e.g. `git.sr.ht`). By default, `github.com`, `gitlab.com`, `bitbucket.org`, and `codeberg.org` are trusted. | `""`                  |
-| `create_pr`      | Whether to create a Pull Request for updates.                                                                                                                       | `true`                |
-| `create_issue`   | Whether to create an Issue for updates instead of/in addition to PRs.                                                                                               | `false`               |
-| `run_validation` | Whether to run build and test commands to validate updates.                                                                                                         | `true`                |
-| `build_command`  | Command to run for building the project during validation.                                                                                                          | `zig build`           |
-| `test_command`   | Command to run for testing the project during validation.                                                                                                           | `zig build test`      |
+| Input           | Description                                                                                                                                                         | Default               |
+| --------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------- |
+| `token`         | GitHub Token used for API access.                                                                                                                                   | `${{ github.token }}` |
+| `extra_domains` | Comma-separated list of additional trusted git domains (e.g. `git.sr.ht`). By default, `github.com`, `gitlab.com`, `bitbucket.org`, and `codeberg.org` are trusted. | `""`                  |
+| `create_pr`     | Whether to create a Pull Request for updates.                                                                                                                       | `true`                |
+| `create_issue`  | Whether to create an Issue for updates instead of/in addition to PRs.                                                                                               | `false`               |
 
 ### Required Permissions
 
@@ -95,11 +88,7 @@ This action requires the following permissions to function correctly:
 
 If you are using a restrictive token or Fine-grained PAT, ensure it has these scopes for the repository.
 
-### Troubleshooting
+### CI Validation
 
-**No PR created?**
-
-If the action detects an update but doesn't create a PR, check the action logs.
-
-- If `run_validation` is enabled (default), the action usually aborts if `zig build` or `zig build test` fails with the new dependency. This ensures you don't merge broken updates.
-- You can disable this by setting `run_validation: false`, but it is not recommended.
+Since `zig-dependabot` runs purely to update dependencies, it does not run your tests locally to save time and resources.
+It is highly recommended to have a separate CI workflow (e.g., `on: pull_request`) that runs `zig build` and `zig build test` to validate the PRs created by this action.

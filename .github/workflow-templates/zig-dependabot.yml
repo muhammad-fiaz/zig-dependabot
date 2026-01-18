@@ -15,10 +15,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@v4
 
       - name: Setup Zig
-        uses: mlugg/setup-zig@v5
+        uses: mlugg/setup-zig@v1
         with:
           version: master
 
@@ -32,6 +32,3 @@ jobs:
           # Configuration
           create_pr: true
           create_issue: true
-          run_validation: true
-          build_command: 'zig build'
-          test_command: 'zig build test'
