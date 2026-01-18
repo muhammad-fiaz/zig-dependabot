@@ -25,7 +25,7 @@ jobs:
       - name: Run Zig Dependabot
         uses: muhammad-fiaz/zig-dependabot@v1.0.0
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.GH_TOKEN }}
           # Optional: Add extra trusted domains
           extra_domains: 'git.sr.ht, my-gitea.com'
           # Optional: Configure notifications
