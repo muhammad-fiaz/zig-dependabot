@@ -39,6 +39,7 @@ export async function checkUpdates(
   }
 
   for (const dep of deps) {
+    console.log('--------------------------------------------------');
     console.log(`Checking ${dep.name} (current: ${dep.version})...`);
 
     // Use the parsed repoUrl
