@@ -81,7 +81,7 @@ describe('PR Manager', () => {
     expect(mockPulls.create).toHaveBeenCalled();
   });
 
-  it('does nothing if same version PR exists', async () => {
+  it('updates existing PR if same version PR exists', async () => {
     const existingPR = {
       number: 456,
       head: { ref: 'zig-deps/dep-1.0.0' }
@@ -91,8 +91,15 @@ describe('PR Manager', () => {
 
     await managePR('dep', '1.0.0', 'zig-deps/dep-1.0.0', 'Title', 'Body');
 
-    // No close, no create
-    expect(mockPulls.update).not.toHaveBeenCalled();
+    // Should update existing PR
+    expect(mockPulls.update).toHaveBeenCalledWith(
+      expect.objectContaining({
+        pull_number: 456,
+        title: 'Title',
+        body: 'Body'
+      })
+    );
+    // No create
     expect(mockPulls.create).not.toHaveBeenCalled();
   });
 });
