@@ -135,9 +135,10 @@ Updates **[${name}](${repoUrl})** from \`${oldVersion}\` to \`${newVersion}\`.
 
 ### Verification
 - [x] Update \`build.zig.zon\`
-- [ ] Verify build and tests in CI
 
 _Automated by [zig-dependabot](https://github.com/muhammad-fiaz/zig-dependabot)_`;
+
+  let prNumber: number | null = null;
 
   // 2-4. PR Workflow
   if (createPr) {
@@ -189,7 +190,10 @@ _Automated by [zig-dependabot](https://github.com/muhammad-fiaz/zig-dependabot)_
 
     // 5. Create PR (only if git ops succeeded)
     try {
-      await managePR(name, newVersion, newBranch, title, body);
+      // Cast the result to any if strict typing complains about void (though we updated it to return number | null)
+      // Since manager.ts is module, build should pick it up.
+      const result = await managePR(name, newVersion, newBranch, title, body);
+      if (result) prNumber = result;
     } catch (e) {
       console.error('    PR management failed', e);
     }
@@ -198,7 +202,7 @@ _Automated by [zig-dependabot](https://github.com/muhammad-fiaz/zig-dependabot)_
   // 6. Create Issue (Optional)
   if (createIssueFlag) {
     try {
-      await createIssue(name, newVersion, title, body);
+      await createIssue(name, newVersion, title, body, prNumber || undefined);
     } catch (e) {
       console.error('    Issue creation failed', e);
     }
