@@ -121,6 +121,9 @@ async function performUpdate(
   const title = `build(deps): bump ${name} from ${oldVersion} to ${newVersion}`;
   const body = `## Dependency Update: ${name}
 
+[![Version Bump](https://img.shields.io/badge/${oldVersion}%20%E2%86%92%20${newVersion}-blue)](https://github.com/muhammad-fiaz/zig-dependabot)
+[![Zig Dependabot](https://img.shields.io/badge/Zig%20Dependabot-v1-orange)](https://github.com/muhammad-fiaz/zig-dependabot)
+
 Updates **[${name}](${repoUrl})** from \`${oldVersion}\` to \`${newVersion}\`.
 
 ### Details
@@ -132,7 +135,7 @@ Updates **[${name}](${repoUrl})** from \`${oldVersion}\` to \`${newVersion}\`.
 
 ### Verification
 - [x] Update \`build.zig.zon\`
-- [ ] CI Validation (Checked by GitHub Actions)
+- [ ] Verify build and tests in CI
 
 _Automated by [zig-dependabot](https://github.com/muhammad-fiaz/zig-dependabot)_`;
 
