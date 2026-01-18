@@ -50,6 +50,22 @@ export async function managePR(depName: string, version: string, branchName: str
   }
 
   if (!currentExists) {
+    // Check if a closed PR already exists for this branch (user closed it)
+    const { data: closedPulls } = await client.rest.pulls.list({
+      owner,
+      repo,
+      state: 'closed',
+      head: `${owner}:${branchName}`,
+      per_page: 1
+    });
+
+    if (closedPulls.length > 0) {
+      console.log(
+        `PR for ${version} (branch ${branchName}) was previously closed. Skipping creation to respect user decision.`
+      );
+      return;
+    }
+
     // Get default branch
     const { data: repoData } = await client.rest.repos.get({ owner, repo });
     const base = repoData.default_branch;
@@ -102,10 +118,26 @@ export async function createIssue(depName: string, version: string, title: strin
     per_page: 100
   });
 
-  const exists = issues.some(i => i.title === title && !i.pull_request);
-  if (exists) {
+  const exactMatch = issues.find(i => i.title === title && !i.pull_request);
+  if (exactMatch) {
     console.log(`Issue already exists for ${depName} ${version}. Skipping.`);
     return;
+  }
+
+  // Close outdated issues for this dependency
+  const outdatedIssues = issues.filter(
+    i => !i.pull_request && i.title.startsWith(`build(deps): bump ${depName} from`) && i.title !== title
+  );
+
+  for (const issue of outdatedIssues) {
+    console.log(`Closing outdated issue #${issue.number}: ${issue.title}`);
+    await client.rest.issues.update({
+      owner,
+      repo,
+      issue_number: issue.number,
+      state: 'closed',
+      state_reason: 'completed'
+    });
   }
 
   console.log(`Creating issue for ${depName} ${version}...`);
