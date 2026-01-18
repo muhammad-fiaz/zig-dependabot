@@ -120,6 +120,7 @@ async function performUpdate(
     return;
   }
 
+  const title = `build(deps): bump ${name} from ${oldVersion} to ${newVersion}`;
   const body = `## Dependency Update: ${name}
 
 Updates **[${name}](${baseUrl})** from \`${oldVersion}\` to \`${newVersion}\`.
