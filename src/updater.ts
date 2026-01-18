@@ -169,16 +169,15 @@ _Automated by [zig-dependabot](https://github.com/muhammad-fiaz/zig-dependabot)_
       try {
         // Build
         console.log(`  Running build: ${buildCommand}`);
-        const buildParts = buildCommand.split(' ');
-        if (buildParts.length > 0 && buildParts[0]) {
-          await run(buildParts[0], buildParts.slice(1));
+        if (buildCommand) {
+          // Use bash -c to handle complex commands (quotes, chains)
+          await run('bash', ['-c', buildCommand]);
         }
 
         // Test
         console.log(`  Running test: ${testCommand}`);
-        const testParts = testCommand.split(' ');
-        if (testParts.length > 0 && testParts[0]) {
-          await run(testParts[0], testParts.slice(1));
+        if (testCommand) {
+          await run('bash', ['-c', testCommand]);
         }
 
         console.log('  Validation passed.');
