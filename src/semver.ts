@@ -1,31 +1,39 @@
-import * as semver from 'semver';
+import { semver } from 'bun';
 
-export function parse(tag: string): semver.SemVer | null {
+export function parse(tag: string): string | null {
   // Common prefixes
   let cleanTag = tag;
   if (cleanTag.startsWith('release-')) {
     cleanTag = cleanTag.substring('release-'.length);
   }
-
-  // semver.clean handles 'v' prefix and whitespace
-  // loose: true allows 'v' and more flexibility
-  const cleaned = semver.clean(cleanTag, { loose: true });
-  if (cleaned) {
-    return semver.parse(cleaned);
+  if (cleanTag.startsWith('v')) {
+    cleanTag = cleanTag.substring(1);
   }
 
-  // Fallback: try parsing directly if clean failed (rare but possible w/ specific formats)
-  return semver.parse(cleanTag, { loose: true });
+  // Check if valid using order (Bun currently lacks a direct valid() function)
+  // If order comparison with itself returns 0, it's valid.
+  try {
+    if (semver.order(cleanTag, cleanTag) === 0) {
+      return cleanTag;
+    }
+  } catch (e) {
+    // Invalid semver
+    return null;
+  }
+
+  return null;
 }
 
-export function isStable(version: semver.SemVer): boolean {
-  return version.prerelease.length === 0;
+export function isStable(version: string): boolean {
+  // Check for prerelease hyphen before any build metadata (+)
+  const versionPart = version.split('+')[0] || '';
+  return !versionPart.includes('-');
 }
 
-export function compare(a: semver.SemVer, b: semver.SemVer): number {
-  return semver.compare(a, b);
+export function compare(a: string, b: string): number {
+  return semver.order(a, b);
 }
 
-export function sort(versions: semver.SemVer[]): semver.SemVer[] {
-  return versions.sort(semver.compare);
+export function sort(versions: string[]): string[] {
+  return versions.sort(semver.order);
 }

@@ -4,19 +4,17 @@ import { compare, isStable, parse } from '../src/semver';
 describe('SemVer Utils', () => {
   it('parses standard tags', () => {
     const v = parse('1.2.3');
-    expect(v?.major).toBe(1);
-    expect(v?.minor).toBe(2);
-    expect(v?.patch).toBe(3);
+    expect(v).toBe('1.2.3');
   });
 
   it('parses v-prefixed tags', () => {
     const v = parse('v1.0.0');
-    expect(v?.version).toBe('1.0.0');
+    expect(v).toBe('1.0.0');
   });
 
   it('parses release-prefixed tags', () => {
     const v = parse('release-2.5.0');
-    expect(v?.version).toBe('2.5.0');
+    expect(v).toBe('2.5.0');
   });
 
   it('detects stability', () => {

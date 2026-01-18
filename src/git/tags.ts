@@ -23,7 +23,7 @@ export async function getLatestVersion(repoUrl: string): Promise<string | null> 
         const v = parse(t);
         return { tag: t, v };
       })
-      .filter((x): x is { tag: string; v: NonNullable<ReturnType<typeof parse>> } => x.v !== null);
+      .filter((x): x is { tag: string; v: string } => x.v !== null);
 
     if (versions.length === 0) return null;
 

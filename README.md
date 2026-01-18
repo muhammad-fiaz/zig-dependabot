@@ -64,7 +64,7 @@ jobs:
           version: master
 
       - name: Run Zig Dependabot
-        uses: muhammad-fiaz/zig-dependabot@v1.0.0
+        uses: muhammad-fiaz/zig-dependabot@v1
         with:
           token: ${{ secrets.GH_TOKEN }}
           # Optional: Add extra trusted domains
