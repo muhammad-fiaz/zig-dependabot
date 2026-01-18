@@ -151,7 +151,7 @@ export async function createIssue(depName: string, version: string, title: strin
   }
 
   console.log(`Creating issue for ${depName} ${version}...`);
-  await client.rest.issues.create({
+  const { data: newIssue } = await client.rest.issues.create({
     owner,
     repo,
     title,
@@ -159,4 +159,31 @@ export async function createIssue(depName: string, version: string, title: strin
     labels: ['dependencies', 'zig']
   });
   console.log('Issue created.');
+  return newIssue.number;
+}
+
+export async function updatePrLink(prNumber: number, issueNumber: number) {
+  const client = getClient();
+  const { owner, repo } = context.repo;
+
+  try {
+    const { data: pr } = await client.rest.pulls.get({
+      owner,
+      repo,
+      pull_number: prNumber
+    });
+
+    if (pr.body && !pr.body.includes(`### Related Issue`)) {
+      const newBody = pr.body + `\n\n### Related Issue\n- #${issueNumber}`;
+      await client.rest.pulls.update({
+        owner,
+        repo,
+        pull_number: prNumber,
+        body: newBody
+      });
+      console.log(`Linked PR #${prNumber} to Issue #${issueNumber}.`);
+    }
+  } catch (e) {
+    console.warn('Failed to link PR to Issue:', e);
+  }
 }

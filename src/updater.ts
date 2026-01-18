@@ -1,6 +1,6 @@
 import { Glob } from 'bun';
 import { getLatestVersion } from './git/tags';
-import { createIssue, managePR } from './pr/manager';
+import { createIssue, managePR, updatePrLink } from './pr/manager';
 import { compare, parse } from './semver';
 import { run } from './util/exec';
 import { updateDependency } from './zon/editor';
@@ -200,11 +200,18 @@ _Automated by [zig-dependabot](https://github.com/muhammad-fiaz/zig-dependabot)_
   }
 
   // 6. Create Issue (Optional)
+  let issueNumber: number | null = null;
   if (createIssueFlag) {
     try {
-      await createIssue(name, newVersion, title, body, prNumber || undefined);
+      const res = await createIssue(name, newVersion, title, body, prNumber || undefined);
+      if (res) issueNumber = res;
     } catch (e) {
       console.error('    Issue creation failed', e);
     }
+  }
+
+  // 7. Link PR and Issue
+  if (prNumber && issueNumber) {
+    await updatePrLink(prNumber, issueNumber);
   }
 }
