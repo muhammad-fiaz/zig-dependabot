@@ -55,7 +55,7 @@ export async function managePR(depName: string, version: string, branchName: str
     const base = repoData.default_branch;
 
     console.log(`Creating PR targeting ${base}...`);
-    await client.rest.pulls.create({
+    const { data: newPr } = await client.rest.pulls.create({
       owner,
       repo,
       title,
@@ -64,7 +64,19 @@ export async function managePR(depName: string, version: string, branchName: str
       base
     });
 
-    console.log('PR created.');
+    console.log(`PR #${newPr.number} created.`);
+
+    // Add labels
+    try {
+      await client.rest.issues.addLabels({
+        owner,
+        repo,
+        issue_number: newPr.number,
+        labels: ['dependencies', 'zig']
+      });
+    } catch (e) {
+      console.warn('Failed to add labels to PR:', e);
+    }
   } else if (existingPR) {
     console.log(`Updating existing PR #${existingPR.number}...`);
     await client.rest.pulls.update({
@@ -101,7 +113,8 @@ export async function createIssue(depName: string, version: string, title: strin
     owner,
     repo,
     title,
-    body
+    body,
+    labels: ['dependencies', 'zig']
   });
   console.log('Issue created.');
 }
