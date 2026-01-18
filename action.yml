@@ -48,7 +48,7 @@ runs:
 
     - name: Run Action
       shell: bash
-      run: node ${{ github.action_path }}/dist/index.js
+      run: bun run ${{ github.action_path }}/dist/index.js
       env:
         INPUT_TOKEN: ${{ inputs.token }}
         INPUT_EXTRA_DOMAINS: ${{ inputs.extra_domains }}

@@ -1,4 +1,3 @@
-import * as fs from 'node:fs';
 import { getLatestVersion } from './git/tags';
 import { createIssue, managePR } from './pr/manager';
 import { compare, parse } from './semver';
@@ -20,12 +19,14 @@ export async function checkUpdates(
   console.log(`Working directory: ${cwd}`);
   const zonPath = `${cwd}/${ZON_FILE}`;
   console.log(`Reading ${zonPath}...`);
-  if (!fs.existsSync(zonPath)) {
+
+  const zonFile = Bun.file(zonPath);
+  if (!(await zonFile.exists())) {
     console.error(`${zonPath} not found.`);
     return;
   }
 
-  const content = fs.readFileSync(zonPath, 'utf-8');
+  const content = await zonFile.text();
   const { deps, minimumZigVersion } = parseZon(content, extraDomains);
 
   if (minimumZigVersion) {
@@ -136,7 +137,7 @@ async function performUpdate(
     // 3. Edit File
     try {
       const newContent = updateDependency(originalContent, name, newUrl, newHash);
-      fs.writeFileSync(ZON_FILE, newContent, 'utf-8');
+      await Bun.write(ZON_FILE, newContent);
     } catch (e) {
       console.error('  Failed to update content', e);
       // Reset and return
