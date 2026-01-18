@@ -165,8 +165,11 @@ async function performUpdate(
         }
 
         console.log('  Validation passed.');
-      } catch (e) {
-        console.error('  Validation failed. Skipping update.', e);
+      } catch (e: any) {
+        // Log just the message to avoid internal stack traces
+        const msg = e instanceof Error ? e.message : String(e);
+        console.error(`  Validation failed. Skipping update.\n${msg}`);
+
         // Clean up and abort
         await run('git', ['checkout', '.']);
         await run('git', ['checkout', '-']);
