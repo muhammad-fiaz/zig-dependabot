@@ -1,0 +1,6 @@
+{
+  "name": "Zig Dependabot",
+  "description": "Automated dependency updates for Zig projects.",
+  "iconName": "package",
+  "categories": ["dependencies"]
+}

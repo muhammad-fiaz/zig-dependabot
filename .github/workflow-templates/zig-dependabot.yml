@@ -1,0 +1,38 @@
+name: Zig Dependabot
+
+on:
+  schedule:
+    - cron: '0 0 * * *' # Run daily at midnight
+  workflow_dispatch: # Allow manual trigger
+
+permissions:
+  contents: write # Required to push update branches
+  pull-requests: write # Required to create and manage PRs
+  issues: write # Required if you enabled issue creation
+
+jobs:
+  update-deps:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Zig
+        uses: mlugg/setup-zig@v1
+        with:
+          version: master
+
+      - name: Run Zig Dependabot
+        uses: muhammad-fiaz/zig-dependabot@v1.0.0
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          # Optional: Add extra trusted domains
+          extra_domains: 'git.sr.ht, my-gitea.com'
+          # Optional: Configure notifications
+          # If not set, defaults to creating PRs (true) but not issues (false).
+          create_pr: true
+          create_issue: false
+          # Optional: Validate updates before creating PR (Recommended)
+          run_validation: true
+          build_command: 'zig build -Doptimize=ReleaseSafe'
+          test_command: 'zig build test'
