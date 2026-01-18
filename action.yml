@@ -29,8 +29,35 @@ inputs:
     required: false
     default: 'zig build test'
 runs:
-  using: 'node24'
-  main: 'dist/index.js'
+  using: 'composite'
+  steps:
+    - name: Setup Bun
+      uses: oven-sh/setup-bun@v2
+      with:
+        bun-version: latest
+
+    - name: Install Dependencies
+      shell: bash
+      run: bun install
+      working-directory: ${{ github.action_path }}
+
+    - name: Build
+      shell: bash
+      run: bun run build
+      working-directory: ${{ github.action_path }}
+
+    - name: Run Action
+      shell: bash
+      run: node dist/index.js
+      working-directory: ${{ github.action_path }}
+      env:
+        INPUT_TOKEN: ${{ inputs.token }}
+        INPUT_EXTRA_DOMAINS: ${{ inputs.extra_domains }}
+        INPUT_CREATE_PR: ${{ inputs.create_pr }}
+        INPUT_CREATE_ISSUE: ${{ inputs.create_issue }}
+        INPUT_RUN_VALIDATION: ${{ inputs.run_validation }}
+        INPUT_BUILD_COMMAND: ${{ inputs.build_command }}
+        INPUT_TEST_COMMAND: ${{ inputs.test_command }}
 branding:
   icon: 'package'
   color: 'orange'
