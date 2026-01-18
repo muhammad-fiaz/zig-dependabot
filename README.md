@@ -69,7 +69,8 @@ jobs:
           token: ${{ secrets.GH_TOKEN }}
           # Optional: Add extra trusted domains
           extra_domains: 'git.sr.ht, my-gitea.com'
-          # Optional: Configure notifications
+          create_pr: true # default true
+          # Optional: create issue along with PR
           create_issue: false
 ```
 
