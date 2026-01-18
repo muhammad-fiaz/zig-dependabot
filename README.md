@@ -60,7 +60,7 @@ jobs:
           version: master
 
       - name: Run Zig Dependabot
-        uses: ./ # Replace with actual action path/repo
+        uses: muhammad-fiaz/zig-dependabot@v1.0.0
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           # Optional: Add extra trusted domains
