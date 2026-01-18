@@ -1,5 +1,3 @@
-import * as exec from '@actions/exec';
-
 export interface ExecResult {
   stdout: string;
   stderr: string;
@@ -7,24 +5,15 @@ export interface ExecResult {
 }
 
 export async function run(command: string, args: string[], cwd?: string, silent: boolean = true): Promise<ExecResult> {
-  let stdout = '';
-  let stderr = '';
-
-  const options: exec.ExecOptions = {
+  const proc = Bun.spawn([command, ...args], {
     cwd,
-    silent,
-    ignoreReturnCode: true, // We handle checking exit code
-    listeners: {
-      stdout: (data: Buffer) => {
-        stdout += data.toString();
-      },
-      stderr: (data: Buffer) => {
-        stderr += data.toString();
-      }
-    }
-  };
+    stdout: 'pipe',
+    stderr: 'pipe'
+  });
 
-  const exitCode = await exec.exec(command, args, options);
+  const stdout = await new Response(proc.stdout).text();
+  const stderr = await new Response(proc.stderr).text();
+  const exitCode = await proc.exited;
 
   if (exitCode !== 0) {
     throw new Error(
