@@ -1,4 +1,5 @@
 <div align="center">
+<img width="500" height="500" alt="logo" src="https://github.com/user-attachments/assets/774b5e27-5c7c-4255-a7bf-f6f431b26e30" />
 
 # Zig Dependabot Action
 
