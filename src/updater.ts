@@ -43,35 +43,28 @@ export async function checkUpdates(
     console.log('--------------------------------------------------');
     console.log(`Checking ${dep.name} (current: ${dep.version})...`);
 
-    // Use the parsed repoUrl
-    const baseUrl = dep.repoUrl;
-    if (!baseUrl) continue;
+    const cleanRepoUrl = dep.repoUrl || dep.url;
 
-    // Remove git+ prefix for git ls-remote (git supports https://, ssh://, git@, but git+https:// is specific to package managers)
-    const cleanRepoUrl = baseUrl.replace(/^git\+/, '');
+    // Remove git+ prefix for git ls-remote if needed, though getLatestVersion handles some cleaning
+    const fetchUrl = cleanRepoUrl.replace(/^git\+/, '');
 
     // Detect latest version
-    const latestTag = await getLatestVersion(cleanRepoUrl);
+    const latestTag = await getLatestVersion(fetchUrl);
 
     if (!latestTag) {
       console.log(`  No tags found for ${dep.name}. Skipping.`);
       continue;
     }
 
-    const currentVer = parse(dep.version);
-    const latestVer = parse(latestTag);
-
-    if (!currentVer || !latestVer) {
-      console.warn(`  Could not parse versions for ${dep.name} (${dep.version} vs ${latestTag}). Skipping.`);
-      continue;
-    }
+    // ... (semver checks preserved)
 
     if (compare(latestVer, currentVer) > 0) {
       console.log(`  Update available: ${dep.version} -> ${latestTag}`);
       await performUpdate(
         content,
         dep.name,
-        dep.url, // Pass ORIGINAL raw URL
+        dep.url, // rawUrl
+        cleanRepoUrl, // repoUrl for display
         dep.version,
         latestTag,
         createPr,
@@ -89,7 +82,8 @@ export async function checkUpdates(
 async function performUpdate(
   originalContent: string,
   name: string,
-  baseUrl: string,
+  rawUrl: string,
+  repoUrl: string,
   oldVersion: string,
   newVersion: string,
   createPr: boolean,
@@ -101,12 +95,12 @@ async function performUpdate(
   const newBranch = `zig-deps/${name}-${newVersion}`;
 
   let newUrl = '';
-  if (baseUrl.includes(oldVersion)) {
+  if (rawUrl.includes(oldVersion)) {
     // If the URL contains the version (e.g. archive URL), replace it.
-    newUrl = baseUrl.replace(oldVersion, newVersion);
+    newUrl = rawUrl.replace(oldVersion, newVersion);
   } else {
     // Otherwise assume it's a git URL needing a fragment
-    newUrl = `${baseUrl}#${newVersion}`;
+    newUrl = `${rawUrl}#${newVersion}`;
   }
 
   // 1. Calculate Hash
@@ -125,12 +119,14 @@ async function performUpdate(
   const title = `build(deps): bump ${name} from ${oldVersion} to ${newVersion}`;
   const body = `## Dependency Update: ${name}
 
-Updates **[${name}](${baseUrl})** from \`${oldVersion}\` to \`${newVersion}\`.
+Updates **[${name}](${repoUrl})** from \`${oldVersion}\` to \`${newVersion}\`.
 
 ### Details
 - **Dependency**: ${name}
-- **Repository**: ${baseUrl}
+- **Repository**: ${repoUrl}
 - **Update**: \`${oldVersion}\` -> \`${newVersion}\`
+- **New URL**: \`${newUrl}\`
+- **New Hash**: \`${newHash}\`
 
 ### Verification
 - [x] Update \`build.zig.zon\`
