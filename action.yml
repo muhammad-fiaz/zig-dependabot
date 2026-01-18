@@ -3,7 +3,7 @@ description: 'Automated dependency updates for Zig projects.'
 inputs:
   token:
     description: 'GitHub Token for creating PRs'
-    required: false
+    required: true
     default: ${{ github.token }}
   extra_domains:
     description: 'Comma-separated list of additional trusted git domains (e.g. git.example.com)'
@@ -11,7 +11,7 @@ inputs:
   create_pr:
     description: 'Whether to create a Pull Request for updates (default: true)'
     required: false
-    default: 'false'
+    default: 'true'
   create_issue:
     description: 'Whether to create an Issue for updates instead of/in addition to PRs (default: false)'
     required: false
