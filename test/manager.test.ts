@@ -44,7 +44,7 @@ const mockOctokit = {
 describe('PR Manager', () => {
   beforeEach(() => {
     vi.resetAllMocks();
-    vi.mocked(client.getClient).mockReturnValue(mockOctokit);
+    (client.getClient as any).mockReturnValue(mockOctokit);
   });
 
   // ... (Existing PR tests: Creates, Closes Old, Updates Existing)
@@ -111,7 +111,7 @@ describe('PR Manager', () => {
 describe('Issue Manager', () => {
   beforeEach(() => {
     vi.resetAllMocks();
-    vi.mocked(client.getClient).mockReturnValue(mockOctokit);
+    (client.getClient as any).mockReturnValue(mockOctokit);
   });
 
   it('creates issue if none exists', async () => {
